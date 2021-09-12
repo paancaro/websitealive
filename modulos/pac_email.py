@@ -43,7 +43,6 @@ def enviar_correo (Server, Correo):
         msg = f'Subject: {Correo.subject}\n\n{Correo.body}'
         smtp.sendmail(Correo.sender, Correo.to, msg)
         print('Correo enviado.')
-        
 
 
 def lee_configuracion_server (dic_configuracion):

@@ -2,6 +2,9 @@ from modulos.pac_websitealive import construir_monitor, espera_siguiente_prueba
 import sys,os,requests
 sys.path.insert(0, '\modulos')
 from modulos import pac_os,pac_email,pac_websitealive
+#Deshabilita el chequeo de Certificados para validar self-certicates e IPs en hostname 
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 #Leer archivo de configuracion
 dic_configuracion = pac_os.toml_leer_archivo("config.toml")
@@ -13,6 +16,11 @@ enviar_correo=dic_configuracion['general']['enviar_correo']
 escribe_en_log_eventos=dic_configuracion['general']['escribe_en_log_eventos']
 zona_horaria=dic_configuracion['general']['zona_horaria']
 informacion_consola=dic_configuracion['general']['informacion_consola']
+if (dic_configuracion['general']['validar_certificado'] == 1):
+    validar_certificado = True
+else:
+    validar_certificado = False
+
 #Leer configuracion del servidor
 server = pac_email.lee_configuracion_server(dic_configuracion)
 #Leer configuracion del correo
@@ -30,8 +38,10 @@ error=False
 while True:
     os.system('cls')
     for mon in Monitor:
+        #r=requests.Session()
+        #r.mount('https://', host_header_ssl.HostHeaderSSLAdapter())
         try:
-            r = requests.get(mon.url, timeout = tiempo_espera_por_prueba)
+            r = requests.get(mon.url, timeout = tiempo_espera_por_prueba, verify=validar_certificado )
         except requests.exceptions.Timeout:
             # Maybe set up for a retry, or continue in a retry loop
             error=True
@@ -72,7 +82,9 @@ while True:
                     pac_email.enviar_correo(server,correo)
     # Resultado a pantalla
     pac_websitealive.imprimir_monitor(Monitor)
+    print (zona_horaria + ': '+ pac_websitealive.hora_zona(zona_horaria) + '\n')
     pac_websitealive.espera_siguiente_prueba(tiempo_espera_entre_pruebas)
+
 
 
 

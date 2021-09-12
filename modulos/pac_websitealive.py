@@ -1,4 +1,4 @@
-import time,sys
+import time,sys,datetime,pytz
 from tabulate import tabulate
 #Construccion de clase MonitorWebsite
 class MonitorWebsite:
@@ -24,7 +24,7 @@ def construir_monitor (dic_configuracion):
 
 def espera_siguiente_prueba (tiempo):
     a = 0
-    sys.stdout.write('Activity ')
+    sys.stdout.write('Use Ctrl+C to terminate  ')
     sys.stdout.flush()
     for a in range(tiempo):
         sys.stdout.write('.')
@@ -35,8 +35,24 @@ def espera_siguiente_prueba (tiempo):
 def imprimir_monitor(Monitor):
     array_Monitor=[]
     for mon in Monitor:
-        array_Monitor.append([mon.url,mon.state,mon.response_time,mon.consecutive_success,mon.consecutive_failures,mon.response_code])
+        if mon.state == 'up':
+            text_state=colored(0, 255, 0, 'up')
+        else:
+            text_state=colored(255, 0, 0, 'down')
+
+        array_Monitor.append([mon.url,text_state,mon.response_time,mon.consecutive_success,mon.consecutive_failures,mon.response_code])
     print(tabulate(array_Monitor,headers=["URL","State","Time(ms)","Success","Fails","Response"],tablefmt="pretty"))
 
 def colored(r, g, b, text):
     return "\033[38;2;{};{};{}m{} \033[38;2;255;255;255m".format(r, g, b, text)
+
+def hora_UTC():
+    horaUTC = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    return horaUTC
+
+
+def hora_zona(zona):
+    format = "%Y-%m-%d %H:%M:%S"
+    horazona = datetime.datetime.now()
+    timezone = pytz.timezone(zona)
+    return (timezone.localize(horazona)).strftime(format)
