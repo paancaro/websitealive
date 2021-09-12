@@ -23,15 +23,17 @@ websites=   [
 
 [general]
 #Tiempo en segundos entre pruebas.
-tiempo_espera_entre_pruebas=10
+tiempo_espera_entre_pruebas=5
 #Tiempo en segundos por cada prueba antes de marcar una falla.
-tiempo_espera_por_prueba=5
+tiempo_espera_por_prueba=3
 #Cuantas eventos iguales y seguidos disparan una notificacion (sitio caido o arriba).
-cuantos_eventos_disparan=5
+cuantos_eventos_disparan=3
 #Envia un correo si un sitio deja de responder en cuantos_eventos_disparan o se recupera y responde por cuantos_eventos_disparan.
-enviar_correo=1
+enviar_correo=0
 #Escribe en el log de eventos.
 escribe_en_log_eventos=1
+#ENombre del log de eventos.
+nombre_log_eventos='websitealive.log'
 #Zona Horaria en la que se esta midiendo el suceso.
 zona_horaria='America/Bogota'
 #Muestra informacion por consola.

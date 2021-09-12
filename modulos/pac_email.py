@@ -24,13 +24,10 @@ class ServidorCorreo:
     def __str__(self):
         return  str(self.__class__) + '\n'+ '\n'.join(('{} = {}'.format(item, self.__dict__[item]) for item in self.__dict__))   
 
-
 #Impresion de una Clase
 def imprimir_clase (Clase,var):
     for var in vars(Clase):
         print(getattr(Clase, var))
-
-
 
 def enviar_correo (Server, Correo):
     with smtplib.SMTP(Server.server, Server.port) as smtp:

@@ -14,6 +14,7 @@ tiempo_espera_por_prueba=dic_configuracion['general']['tiempo_espera_por_prueba'
 cuantos_eventos_disparan=dic_configuracion['general']['cuantos_eventos_disparan']
 enviar_correo=dic_configuracion['general']['enviar_correo']
 escribe_en_log_eventos=dic_configuracion['general']['escribe_en_log_eventos']
+nombre_log_eventos=dic_configuracion['general']['nombre_log_eventos']
 zona_horaria=dic_configuracion['general']['zona_horaria']
 informacion_consola=dic_configuracion['general']['informacion_consola']
 if (dic_configuracion['general']['validar_certificado'] == 1):
@@ -80,6 +81,9 @@ while True:
                     correo.subject=dic_configuracion['email']['build']['subject'] + ' ' + mon.url + ' is ' +  mon.state
                     correo.body=dic_configuracion['email']['build']['body'] + ' ' + mon.url + ' is ' +  mon.state
                     pac_email.enviar_correo(server,correo)
+                if escribe_en_log_eventos:
+                    eventolog = pac_os.EventoLog(zona_horaria + ': '+ pac_websitealive.hora_zona(zona_horaria), mon.url, mon.state, str(mon.response_code))
+                    pac_os.escribir_log(nombre_log_eventos,eventolog)
     # Resultado a pantalla
     pac_websitealive.imprimir_monitor(Monitor)
     print (zona_horaria + ': '+ pac_websitealive.hora_zona(zona_horaria) + '\n')
