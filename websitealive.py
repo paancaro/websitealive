@@ -1,4 +1,4 @@
-from modulos.pac_websitealive import construir_monitor
+from modulos.pac_websitealive import construir_monitor, espera_siguiente_prueba
 import sys,os,requests
 sys.path.insert(0, '\modulos')
 from modulos import pac_os,pac_email,pac_websitealive
@@ -26,34 +26,53 @@ correo = pac_email.CorreoElectronico(
 #Construye el monitor
 Monitor = pac_websitealive.construir_monitor(dic_configuracion)
 #Ejecuta Monitor: Chequeo de websites
-os.system('cls')
-for mon in Monitor:
-    print('Testing: ' + mon.url)
-    r = requests.get(mon.url, timeout = tiempo_espera_por_prueba)
-    print (r.status_code)
-    if r.status_code != 200:
-        mon.consecutive_failures+=1
-        mon.consecutive_success=0
-        mon.state='down'
-    else:
-        mon.consecutive_failures=0
-        mon.consecutive_success+=1
-        mon.state='up'
-#Ejecuta monitor: Envio de correos
-for mon in Monitor:
-    if mon.consecutive_failures > cuantos_eventos_disparan or mon.consecutive_success > cuantos_eventos_disparan:
-        if mon.previous_state != mon.state:
-            mon.previous_state=mon.state
-            if enviar_correo:
-                correo.subject=dic_configuracion['email']['build']['subject'] + ' ' + mon.url + ' is ' +  mon.state
-                correo.body=dic_configuracion['email']['build']['body'] + ' ' + mon.url + ' is ' +  mon.state
-                pac_email.enviar_correo(server,correo)
-# Resultado a pantalla
-for mon in Monitor:
-    print(mon)
-
-
-
+error=False
+while True:
+    os.system('cls')
+    for mon in Monitor:
+        try:
+            r = requests.get(mon.url, timeout = tiempo_espera_por_prueba)
+        except requests.exceptions.Timeout:
+            # Maybe set up for a retry, or continue in a retry loop
+            error=True
+            print (pac_websitealive.colored(255,0,0,'Timeout exceeded: '+ mon.url))
+        except requests.exceptions.TooManyRedirects:
+            # Tell the user their URL was bad and try a different one
+            error=True
+            print (pac_websitealive.colored(255,0,0,'Bad URL constructed: '+ mon.url))
+        except requests.exceptions.RequestException:
+            # catastrophic error. bail.
+            error=True
+            print (pac_websitealive.colored(255,0,0,'Failed to establish a connection: '+ mon.url))
+            #raise SystemExit(e)
+        #Guarda respuesta
+        if error:
+            mon.response_time= round(tiempo_espera_por_prueba*1000,0)
+            mon.response_code= 408
+            error=False
+        else:
+            mon.response_time= round((r.elapsed.total_seconds())*1000,0)
+            mon.response_code= r.status_code
+        if mon.response_code != 200:
+            mon.consecutive_failures+=1
+            mon.consecutive_success=0
+            mon.state='down'
+        else:
+            mon.consecutive_failures=0
+            mon.consecutive_success+=1
+            mon.state='up'
+    #Ejecuta monitor: Envio de correos
+    for mon in Monitor:
+        if mon.consecutive_failures > cuantos_eventos_disparan or mon.consecutive_success > cuantos_eventos_disparan:
+            if mon.previous_state != mon.state:
+                mon.previous_state=mon.state
+                if enviar_correo:
+                    correo.subject=dic_configuracion['email']['build']['subject'] + ' ' + mon.url + ' is ' +  mon.state
+                    correo.body=dic_configuracion['email']['build']['body'] + ' ' + mon.url + ' is ' +  mon.state
+                    pac_email.enviar_correo(server,correo)
+    # Resultado a pantalla
+    pac_websitealive.imprimir_monitor(Monitor)
+    pac_websitealive.espera_siguiente_prueba(tiempo_espera_entre_pruebas)
 
 
 
