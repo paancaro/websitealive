@@ -1,0 +1,43 @@
+[info]
+project="Website Alive"
+author = "Pablo Castro"
+version = "1.0.0"
+date ="11 Sep 2021"
+
+[general]
+#Tiempo en segundos entre pruebas.
+tiempo_espera_entre_pruebas=10
+#Tiempo en segundos por cada prueba antes de marcar una falla.
+tiempo_espera_por_prueba=5
+#Cuantas eventos iguales y seguidos disparan una notificacion (sitio caido o arriba).
+cuantos_eventos_disparan=3
+#Envia un correo si un sitio deja de responder en cuantos_eventos_disparan o se recupera y responde por cuantos_eventos_disparan.
+enviar_correo=0
+#Escribe en el log de eventos.
+escribe_en_log_eventos=1
+#Zona Horaria en la que se esta midiendo el suceso.
+zona_horaria='BOG'
+#Muestra informacion por consola.
+informacion_consola=1
+
+[sites]
+websites=   [
+            "https://www.google.com",
+            "https://www.pae.com"
+            ]
+
+[email]
+[email.server]
+    server="outlook.office365.com"
+    port=587
+    login="aravih@pae.com"
+    password="fLg9@iZrE4Bb!Xh23"
+[email.config]
+    sender="aravih@pae.com"
+    to="castrop@gmail.com"
+    cc=""
+    bcc=""
+[email.build]
+    subject="Site is  "
+    body="Alert! "
+
