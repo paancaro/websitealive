@@ -37,8 +37,14 @@ def enviar_correo (Server, Correo):
         smtp.ehlo()
         print('Autenticando en servidor ' + Server.server + ', puerto ' + str(Server.port) + '.')
         smtp.login(Server.login, Server.password)
-        msg = f'Subject: {Correo.subject}\n\n{Correo.body}'
-        smtp.sendmail(Correo.sender, Correo.to, msg)
+        # Version inicial
+        #msg = f'Subject: {Correo.subject}\n\n{Correo.body}'
+        #smtp.sendmail(Correo.sender, Correo.to, msg)
+        # Version incluyendo CC y BCC
+        message = "From: %s\r\n" % Correo.sender + "To: %s\r\n" % Correo.to  + "CC: %s\r\n" % Correo.cc + "Subject: %s\r\n" % Correo.subject  + "\r\n" + Correo.body
+        toaddrs = [Correo.to] + [Correo.cc] + [Correo.bcc]
+        smtp.sendmail(Correo.sender, toaddrs , message)
+        smtp.quit()
         print('Correo enviado.')
 
 

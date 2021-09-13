@@ -1,3 +1,5 @@
+#compilacion
+#pyinstaller.exe --onefile --icon:logo.ico websitealive.py
 from modulos.pac_websitealive import construir_monitor, espera_siguiente_prueba
 import sys,os,requests
 sys.path.insert(0, '\modulos')
@@ -27,8 +29,8 @@ server = pac_email.lee_configuracion_server(dic_configuracion)
 #Leer configuracion del correo
 correo = pac_email.CorreoElectronico(
     dic_configuracion['email']['config']['to'],
-    '',
-    '',
+    dic_configuracion['email']['config']['cc'],
+    dic_configuracion['email']['config']['bcc'],
     dic_configuracion['email']['build']['subject'],
     dic_configuracion['email']['build']['body'],
     dic_configuracion['email']['config']['sender'])
@@ -39,8 +41,6 @@ error=False
 while True:
     os.system('cls')
     for mon in Monitor:
-        #r=requests.Session()
-        #r.mount('https://', host_header_ssl.HostHeaderSSLAdapter())
         try:
             r = requests.get(mon.url, timeout = tiempo_espera_por_prueba, verify=validar_certificado )
         except requests.exceptions.Timeout:
@@ -81,6 +81,9 @@ while True:
                     correo.subject=dic_configuracion['email']['build']['subject'] + ' ' + mon.url + ' is ' +  mon.state
                     correo.body=dic_configuracion['email']['build']['body'] + ' ' + mon.url + ' is ' +  mon.state
                     pac_email.enviar_correo(server,correo)
+                    if escribe_en_log_eventos:
+                        eventolog = pac_os.EventoLog(zona_horaria + ': '+ pac_websitealive.hora_zona(zona_horaria), 'Email sent To: ' + correo.to , ' Site: ' +  mon.url  , 'State: ' + mon.state)
+                        pac_os.escribir_log(nombre_log_eventos,eventolog)
                 if escribe_en_log_eventos:
                     eventolog = pac_os.EventoLog(zona_horaria + ': '+ pac_websitealive.hora_zona(zona_horaria), mon.url, mon.state, str(mon.response_code))
                     pac_os.escribir_log(nombre_log_eventos,eventolog)

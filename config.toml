@@ -1,38 +1,36 @@
 [sites]
 websites=   [
             "https://www.google.com",
-            "https://www.pae.com",
-            "https://200.26.150.4/global-protect/login.esp",
             "http://localhost/Landing3/"
             ]
 
 [email]
 [email.server]
-    server="outlook.office365.com"
+    server=""
     port=587
-    login="aravih@pae.com"
-    password="fLg9@iZrE4Bb!Xh23"
+    login=""
+    password=""
 [email.config]
-    sender="aravih@pae.com"
-    to="castrop@gmail.com"
+    sender=""
+    to=""
     cc=""
     bcc=""
 [email.build]
-    subject="Site is  "
-    body="Alert! "
+    subject="Alert Site is  "
+    body="Change state notification ==>  "
 
 [general]
 #Tiempo en segundos entre pruebas.
-tiempo_espera_entre_pruebas=5
+tiempo_espera_entre_pruebas=10
 #Tiempo en segundos por cada prueba antes de marcar una falla.
 tiempo_espera_por_prueba=3
 #Cuantas eventos iguales y seguidos disparan una notificacion (sitio caido o arriba).
-cuantos_eventos_disparan=3
+cuantos_eventos_disparan=10
 #Envia un correo si un sitio deja de responder en cuantos_eventos_disparan o se recupera y responde por cuantos_eventos_disparan.
-enviar_correo=0
+enviar_correo=1
 #Escribe en el log de eventos.
 escribe_en_log_eventos=1
-#ENombre del log de eventos.
+#Nombre del log de eventos.
 nombre_log_eventos='websitealive.log'
 #Zona Horaria en la que se esta midiendo el suceso.
 zona_horaria='America/Bogota'
@@ -44,5 +42,5 @@ validar_certificado=0
 [info]
 project="Website Alive"
 author = "Pablo Castro"
-version = "1.0.0"
+version = "1.0.3"
 date ="11 Sep 2021"
