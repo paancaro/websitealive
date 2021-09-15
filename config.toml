@@ -1,12 +1,14 @@
 [sites]
 websites=   [
             "https://www.google.com",
+            "http://localhost/Landing3/",
             "http://localhost/Landing3/"
             ]
 
 alias=   [
             "Sitio de Google",
-            "Sitio local"
+            "Sitio local",
+            "Sitio local 2"
             ]
 
 [email]
@@ -46,13 +48,13 @@ validar_certificado=0
 
 [tts]
 #Lenguaje del Text to Speech (defecto es - English )
-language_tts='es'
-alert_tts='Alerta, cambio de estado: '
+language_tts='en'
+alert_tts='Alert, site has changed: '
 
 
 [messages]
-msg_up='arriba'
-msg_down='caido'
+msg_up='up'
+msg_down='down'
 
 
 [info]

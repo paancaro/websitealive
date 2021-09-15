@@ -17,7 +17,7 @@ Text to Speech
 pip install gTTS
 
 MP3 player para Python
-pip install playsound
+pip install pygame
 
 Gestor de formato TOML
 pip install toml
@@ -35,6 +35,8 @@ from modulos import pac_os,pac_email,pac_websitealive
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+
+version='1.0.5'
 #Leer archivo de configuracion
 dic_configuracion = pac_os.toml_leer_archivo("config.toml")
 #Parametros de configuracion
@@ -70,8 +72,9 @@ Monitor = pac_websitealive.construir_monitor(dic_configuracion)
 #Ejecuta Monitor: Chequeo de websites
 error=False
 os.system('cls')
-print(pac_websitealive.colored(0,0,255,titulo_principal) + " - Running")
+print(pac_websitealive.colored(0,0,255,titulo_principal) + "Version:" +version)
 while True:
+    pac_websitealive.imprimir_monitor(Monitor)
     for mon in Monitor:
         try:
             r = requests.get(mon.url, timeout = tiempo_espera_por_prueba, verify=validar_certificado )
@@ -108,8 +111,7 @@ while True:
     for mon in Monitor:
         if mon.consecutive_failures > cuantos_eventos_disparan or mon.consecutive_success > cuantos_eventos_disparan:
             if mon.previous_state != mon.state:
-
-                pac_os.play_alert_message(alert_tts+ ' ' + mon.alias + ' ' + mon.state,language_tts)
+                pac_os.play_alert_message(alert_tts + ' ' + mon.alias + ' ' + mon.state,language_tts)
                 mon.previous_state=mon.state
                 if enviar_correo:
                     correo.subject=dic_configuracion['email']['build']['subject'] + ' ' + mon.url + ' is ' +  mon.state
@@ -122,12 +124,10 @@ while True:
                     eventolog = pac_os.EventoLog(zona_horaria + ': '+ pac_websitealive.hora_zona(zona_horaria), mon.url, mon.alias, mon.state, str(mon.response_code))
                     pac_os.escribir_log(nombre_log_eventos,eventolog)
     # Resultado a pantalla
-    pac_websitealive.imprimir_monitor(Monitor)
-    print (zona_horaria + ': '+ pac_websitealive.hora_zona(zona_horaria) + '\n')
+    #pac_websitealive.imprimir_monitor(Monitor)
     pac_websitealive.espera_siguiente_prueba(tiempo_espera_entre_pruebas)
     os.system('cls')
-    print(pac_websitealive.colored(0,0,255,titulo_principal) + " - Running")
-
+    print(pac_websitealive.colored(0,0,255,titulo_principal) +  ' | ' + pac_websitealive.colored(255,255,0,zona_horaria + ': '+ pac_websitealive.hora_zona(zona_horaria)) +  ' | ' +pac_websitealive.colored(100,100,100," Version:" + version))
 
 
 

@@ -1,7 +1,6 @@
 from gtts import gTTS
-from playsound import playsound
 from io import open 
-import toml,os
+import toml,os,pygame,time
 
 
 #Construccion de clase EventoLog
@@ -36,11 +35,17 @@ def escribir_log(nombrefile,eventolog):
     logeventos.close()
 
 def play_alert_message (message,language):
-    myobj = gTTS(text=message, lang=language, slow=False)
-    myobj.save("alert.mp3")
     try:
-        playsound('alert.mp3')
+        myobj = gTTS(text=message, lang=language, slow=False)
+        myobj.save("alert.mp3")
+        pygame.mixer.init()
+        pygame.mixer.music.load('alert.mp3')
+        pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy():
+            time.sleep(1)
+        else:
+            pygame.mixer.quit()
+        if os.path.exists("alert.mp3"):
+            os.remove("alert.mp3")
     except:
-        print()
-    if os.path.exists("alert.mp3"):
-        os.remove("alert.mp3") 
+        print('Sound file cannot be played.') 
