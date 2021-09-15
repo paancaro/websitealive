@@ -46,7 +46,10 @@ enviar_correo=dic_configuracion['general']['enviar_correo']
 escribe_en_log_eventos=dic_configuracion['general']['escribe_en_log_eventos']
 nombre_log_eventos=dic_configuracion['general']['nombre_log_eventos']
 zona_horaria=dic_configuracion['general']['zona_horaria']
-informacion_consola=dic_configuracion['general']['informacion_consola']
+msg_up=dic_configuracion['messages']['msg_up']
+msg_down=dic_configuracion['messages']['msg_down']
+alert_tts=dic_configuracion['tts']['alert_tts']
+language_tts=dic_configuracion['tts']['language_tts']
 if (dic_configuracion['general']['validar_certificado'] == 1):
     validar_certificado = True
 else:
@@ -61,7 +64,7 @@ correo = pac_email.CorreoElectronico(
     dic_configuracion['email']['config']['bcc'],
     dic_configuracion['email']['build']['subject'],
     dic_configuracion['email']['build']['body'],
-    dic_configuracion['email']['config']['sender'])
+    dic_configuracion['email']['config']['sender'],msg_up,msg_down)
 #Construye el monitor
 Monitor = pac_websitealive.construir_monitor(dic_configuracion)
 #Ejecuta Monitor: Chequeo de websites
@@ -96,15 +99,17 @@ while True:
         if mon.response_code != 200:
             mon.consecutive_failures+=1
             mon.consecutive_success=0
-            mon.state='down'
+            mon.state=msg_down
         else:
             mon.consecutive_failures=0
             mon.consecutive_success+=1
-            mon.state='up'
+            mon.state=msg_up
     #Ejecuta monitor: Envio de correos
     for mon in Monitor:
         if mon.consecutive_failures > cuantos_eventos_disparan or mon.consecutive_success > cuantos_eventos_disparan:
             if mon.previous_state != mon.state:
+
+                pac_os.play_alert_message(alert_tts+ ' ' + mon.alias + ' ' + mon.state,language_tts)
                 mon.previous_state=mon.state
                 if enviar_correo:
                     correo.subject=dic_configuracion['email']['build']['subject'] + ' ' + mon.url + ' is ' +  mon.state

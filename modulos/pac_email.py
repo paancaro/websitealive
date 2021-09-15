@@ -3,13 +3,15 @@ import smtplib
 
 #Construccion de clase CorreoElectronico
 class CorreoElectronico:
-    def __init__(self, to, cc, bcc, subject, body, sender):
+    def __init__(self, to, cc, bcc, subject, body, sender,msg_up,msg_down):
         self.to = to
         self.cc = cc
         self.bcc = bcc
         self.subject = subject
         self.body = body
         self.sender = sender
+        self.msg_up = msg_up
+        self.msg_down = msg_down
 
     def __str__(self):
         return  str(self.__class__) + '\n'+ '\n'.join(('{} = {}'.format(item, self.__dict__[item]) for item in self.__dict__))
@@ -62,3 +64,5 @@ def lee_configuracion_server (dic_configuracion):
         dic_configuracion['email']['server']['login'],
         dic_configuracion['email']['server']['password'])
     return server
+
+

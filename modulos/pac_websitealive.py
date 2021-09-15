@@ -3,7 +3,7 @@ from tabulate import tabulate
 #Construccion de clase MonitorWebsite
 class MonitorWebsite:
     def __init__(
-        self, url ,alias, consecutive_failures, consecutive_success, state, previous_state,response_time,response_code):
+        self, url ,alias, consecutive_failures, consecutive_success, state, previous_state,response_time,response_code,msg_up,msg_down):
         self.url = url
         self.alias = alias
         self.consecutive_failures = consecutive_failures
@@ -12,6 +12,8 @@ class MonitorWebsite:
         self.previous_state = previous_state
         self.response_time = response_time
         self.response_code = response_code
+        self.msg_up = msg_up
+        self.msg_down = msg_down
         
 
     def __str__(self):
@@ -21,16 +23,18 @@ def construir_monitor (dic_configuracion):
     lista_monitor = []
     websites = dic_configuracion['sites']['websites']
     alias = dic_configuracion['sites']['alias']
+    msg_up=dic_configuracion['messages']['msg_up']
+    msg_down=dic_configuracion['messages']['msg_down']
     hay_alias=False
     contador=0
     if len(websites) == len(alias):
         hay_alias=True
     for website in websites:
         if hay_alias:
-            lista_monitor.append(MonitorWebsite(website,alias[contador],0,0,'up','up',0,200))
+            lista_monitor.append(MonitorWebsite(website,alias[contador],0,0,msg_up,msg_up,0,200,msg_up,msg_down))
             contador+=1
         else:
-            lista_monitor.append(MonitorWebsite(website,' ',0,0,'up','up',0,200))
+            lista_monitor.append(MonitorWebsite(website,' ',0,0,msg_up,msg_up,0,200,msg_up,msg_down))
     return lista_monitor
 
 def espera_siguiente_prueba (tiempo):
@@ -46,10 +50,10 @@ def espera_siguiente_prueba (tiempo):
 def imprimir_monitor(Monitor):
     array_Monitor=[]
     for mon in Monitor:
-        if mon.state == 'up':
-            text_state=colored(0, 255, 0, 'up')
+        if mon.state == mon.msg_up:
+            text_state=colored(0, 255, 0, mon.msg_up)
         else:
-            text_state=colored(255, 0, 0, 'down')
+            text_state=colored(255, 0, 0, mon.msg_down)
 
         array_Monitor.append([mon.url,mon.alias,text_state,mon.response_time,mon.consecutive_success,mon.consecutive_failures,mon.response_code])
     print(tabulate(array_Monitor,headers=["URL","Alias","State","Time(ms)","Success","Fails","Response"],tablefmt="pretty"))

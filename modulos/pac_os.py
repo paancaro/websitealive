@@ -1,6 +1,8 @@
-from sys import argv
+from gtts import gTTS
+from playsound import playsound
+from io import open 
 import toml,os
-from io import open
+
 
 #Construccion de clase EventoLog
 class EventoLog:
@@ -32,3 +34,13 @@ def escribir_log(nombrefile,eventolog):
         logeventos.write('DateTime | URL |  Alias  | State | Response \n')
     logeventos.write(eventolog_texto (eventolog))
     logeventos.close()
+
+def play_alert_message (message,language):
+    myobj = gTTS(text=message, lang=language, slow=False)
+    myobj.save("alert.mp3")
+    try:
+        playsound('alert.mp3')
+    except:
+        print()
+    if os.path.exists("alert.mp3"):
+        os.remove("alert.mp3") 

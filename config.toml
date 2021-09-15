@@ -5,7 +5,8 @@ websites=   [
             ]
 
 alias=   [
-
+            "Sitio de Google",
+            "Sitio local"
             ]
 
 [email]
@@ -20,8 +21,8 @@ alias=   [
     cc=""
     bcc=""
 [email.build]
-    subject="Alert Site is  "
-    body="Change state notification ==>  "
+    subject="Cambio de estado WebSite "
+    body="El siguiente sitio web se encuentra:  "
 
 [general]
 #Titulo principal.
@@ -40,10 +41,19 @@ escribe_en_log_eventos=1
 nombre_log_eventos='websitealive.log'
 #Zona Horaria en la que se esta midiendo el suceso.
 zona_horaria='America/Bogota'
-#Muestra informacion por consola.
-informacion_consola=1
 #Valida Certificados SSL (Si cuando todos los sitios tienen certificado, No para el caso de Hostnames o IPs)
 validar_certificado=0
+
+[tts]
+#Lenguaje del Text to Speech (defecto es - English )
+language_tts='es'
+alert_tts='Alerta, cambio de estado: '
+
+
+[messages]
+msg_up='arriba'
+msg_down='caido'
+
 
 [info]
 project="Website Alive"
