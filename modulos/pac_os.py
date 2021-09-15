@@ -4,9 +4,10 @@ from io import open
 
 #Construccion de clase EventoLog
 class EventoLog:
-    def __init__(self, date_time, url, state, response):
+    def __init__(self, date_time, url, alias, state, response):
         self.date_time = date_time
         self.url = url
+        self.alias = alias
         self.state = state
         self.response = response
 
@@ -20,7 +21,7 @@ def toml_leer_archivo(data):
     return parsed
 
 def eventolog_texto (eventolog):
-    texto = eventolog.date_time + ' | ' + eventolog.url + ' | ' + eventolog.state + ' | ' + eventolog.response + '\n'
+    texto = eventolog.date_time + ' | ' + eventolog.url + ' | ' + ' | ' + eventolog.alias + ' | ' + eventolog.state + ' | ' + eventolog.response + '\n'
     return texto
 
 def escribir_log(nombrefile,eventolog):
@@ -28,6 +29,6 @@ def escribir_log(nombrefile,eventolog):
         logeventos = open (nombrefile,"a")
     else:
         logeventos = open (nombrefile,"w")
-        logeventos.write('DateTime | URL | State | Response \n')
+        logeventos.write('DateTime | URL |  Alias  | State | Response \n')
     logeventos.write(eventolog_texto (eventolog))
     logeventos.close()

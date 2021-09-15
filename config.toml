@@ -4,6 +4,10 @@ websites=   [
             "http://localhost/Landing3/"
             ]
 
+alias=   [
+
+            ]
+
 [email]
 [email.server]
     server=""
@@ -20,12 +24,14 @@ websites=   [
     body="Change state notification ==>  "
 
 [general]
+#Titulo principal.
+titulo_principal="Web Site Monitor Tool"
 #Tiempo en segundos entre pruebas.
-tiempo_espera_entre_pruebas=10
+tiempo_espera_entre_pruebas=3
 #Tiempo en segundos por cada prueba antes de marcar una falla.
 tiempo_espera_por_prueba=3
 #Cuantas eventos iguales y seguidos disparan una notificacion (sitio caido o arriba).
-cuantos_eventos_disparan=10
+cuantos_eventos_disparan=3
 #Envia un correo si un sitio deja de responder en cuantos_eventos_disparan o se recupera y responde por cuantos_eventos_disparan.
 enviar_correo=1
 #Escribe en el log de eventos.

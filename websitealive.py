@@ -1,5 +1,32 @@
-#compilacion
-#pyinstaller.exe --onefile --icon:logo.ico websitealive.py
+"""
+Compilacion
+pyinstaller.exe --onefile -i:logo.ico websitealive.py
+
+Instalacion dependencias
+
+Conversor de Zona  horaria
+pip install pytz
+
+Modulo de solicitud de requerimientos http: / https:
+pip install requests
+
+Creacion de tablas elegantes por pantalla 
+pip install tabulate
+
+Text to Speech
+pip install gTTS
+
+MP3 player para Python
+pip install playsound
+
+Gestor de formato TOML
+pip install toml
+
+Gestor de envio de correos electronicos
+pip install smtplib
+
+
+"""
 from modulos.pac_websitealive import construir_monitor, espera_siguiente_prueba
 import sys,os,requests
 sys.path.insert(0, '\modulos')
@@ -12,6 +39,7 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 dic_configuracion = pac_os.toml_leer_archivo("config.toml")
 #Parametros de configuracion
 tiempo_espera_entre_pruebas=dic_configuracion['general']['tiempo_espera_entre_pruebas']
+titulo_principal=dic_configuracion['general']['titulo_principal']
 tiempo_espera_por_prueba=dic_configuracion['general']['tiempo_espera_por_prueba']
 cuantos_eventos_disparan=dic_configuracion['general']['cuantos_eventos_disparan']
 enviar_correo=dic_configuracion['general']['enviar_correo']
@@ -38,8 +66,9 @@ correo = pac_email.CorreoElectronico(
 Monitor = pac_websitealive.construir_monitor(dic_configuracion)
 #Ejecuta Monitor: Chequeo de websites
 error=False
+os.system('cls')
+print(pac_websitealive.colored(0,0,255,titulo_principal) + " - Running")
 while True:
-    os.system('cls')
     for mon in Monitor:
         try:
             r = requests.get(mon.url, timeout = tiempo_espera_por_prueba, verify=validar_certificado )
@@ -79,19 +108,20 @@ while True:
                 mon.previous_state=mon.state
                 if enviar_correo:
                     correo.subject=dic_configuracion['email']['build']['subject'] + ' ' + mon.url + ' is ' +  mon.state
-                    correo.body=dic_configuracion['email']['build']['body'] + ' ' + mon.url + ' is ' +  mon.state
-                    pac_email.enviar_correo(server,correo)
-                    if escribe_en_log_eventos:
-                        eventolog = pac_os.EventoLog(zona_horaria + ': '+ pac_websitealive.hora_zona(zona_horaria), 'Email sent To: ' + correo.to , ' Site: ' +  mon.url  , 'State: ' + mon.state)
+                    correo.body=dic_configuracion['email']['build']['body'] + ' ' + mon.alias + ' ' + mon.url + ' is ' +  mon.state
+                    envia_correo = pac_email.enviar_correo(server,correo)
+                    if escribe_en_log_eventos and envia_correo:
+                        eventolog = pac_os.EventoLog(zona_horaria + ': '+ pac_websitealive.hora_zona(zona_horaria), 'Email sent To: ' + correo.to , ' Site: ' +  mon.url  , 'State: ' + mon.state, 'Alias: ' + mon.alias)
                         pac_os.escribir_log(nombre_log_eventos,eventolog)
                 if escribe_en_log_eventos:
-                    eventolog = pac_os.EventoLog(zona_horaria + ': '+ pac_websitealive.hora_zona(zona_horaria), mon.url, mon.state, str(mon.response_code))
+                    eventolog = pac_os.EventoLog(zona_horaria + ': '+ pac_websitealive.hora_zona(zona_horaria), mon.url, mon.alias, mon.state, str(mon.response_code))
                     pac_os.escribir_log(nombre_log_eventos,eventolog)
     # Resultado a pantalla
     pac_websitealive.imprimir_monitor(Monitor)
     print (zona_horaria + ': '+ pac_websitealive.hora_zona(zona_horaria) + '\n')
     pac_websitealive.espera_siguiente_prueba(tiempo_espera_entre_pruebas)
-
+    os.system('cls')
+    print(pac_websitealive.colored(0,0,255,titulo_principal) + " - Running")
 
 
 

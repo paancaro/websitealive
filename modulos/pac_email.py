@@ -1,3 +1,4 @@
+from modulos import pac_websitealive
 import smtplib
 
 #Construccion de clase CorreoElectronico
@@ -30,24 +31,30 @@ def imprimir_clase (Clase,var):
         print(getattr(Clase, var))
 
 def enviar_correo (Server, Correo):
-    with smtplib.SMTP(Server.server, Server.port) as smtp:
-        print('\nIniciando envio de correo a ' + Correo.to + '.')
-        smtp.ehlo()
-        smtp.starttls()
-        smtp.ehlo()
-        print('Autenticando en servidor ' + Server.server + ', puerto ' + str(Server.port) + '.')
-        smtp.login(Server.login, Server.password)
-        # Version inicial
-        #msg = f'Subject: {Correo.subject}\n\n{Correo.body}'
-        #smtp.sendmail(Correo.sender, Correo.to, msg)
-        # Version incluyendo CC y BCC
-        message = "From: %s\r\n" % Correo.sender + "To: %s\r\n" % Correo.to  + "CC: %s\r\n" % Correo.cc + "Subject: %s\r\n" % Correo.subject  + "\r\n" + Correo.body
-        toaddrs = [Correo.to] + [Correo.cc] + [Correo.bcc]
-        smtp.sendmail(Correo.sender, toaddrs , message)
-        smtp.quit()
-        print('Correo enviado.')
-
-
+    try:
+        with smtplib.SMTP(Server.server, Server.port) as smtp:
+            print('\nStarting connection to email server ' + Server.server + '.')
+            smtp.ehlo()
+            smtp.starttls()
+            smtp.ehlo()
+            print('Authenticating .... ' + Server.server + ', puerto ' + str(Server.port) + '.')
+            smtp.login(Server.login, Server.password)
+            # Version inicial
+            #msg = f'Subject: {Correo.subject}\n\n{Correo.body}'
+            #smtp.sendmail(Correo.sender, Correo.to, msg)
+            # Version incluyendo CC y BCC
+            message = "From: %s\r\n" % Correo.sender + "To: %s\r\n" % Correo.to  + "CC: %s\r\n" % Correo.cc + "Subject: %s\r\n" % Correo.subject  + "\r\n" + Correo.body
+            toaddrs = [Correo.to] + [Correo.cc] + [Correo.bcc]
+            smtp.sendmail(Correo.sender, toaddrs , message)
+            smtp.quit()
+            print('Email sent')
+            return True
+    except smtplib.SMTPServerDisconnected:
+        print (pac_websitealive.colored(255, 0, 0,'Server cannot be connected: Check configurations.'))
+        return False
+    except smtplib.SMTPException:
+        print (pac_websitealive.colored(255, 0, 0,'Email cannot be sent: General failure.'))
+        return False
 def lee_configuracion_server (dic_configuracion):
     server = ServidorCorreo(
         dic_configuracion['email']['server']['server'],
