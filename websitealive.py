@@ -89,17 +89,21 @@ while True:
         except requests.exceptions.RequestException:
             # catastrophic error. bail.
             error=True
+            respuesta_sitio=False
             print (pac_websitealive.colored(255,0,0,'Failed to establish a connection: '+ mon.url))
             #raise SystemExit(e)
         #Guarda respuesta
         if error:
             mon.response_time= round(tiempo_espera_por_prueba*1000,0)
             mon.response_code= 408
+            respuesta_sitio=False
             error=False
         else:
             mon.response_time= round((r.elapsed.total_seconds())*1000,0)
             mon.response_code= r.status_code
-        if mon.response_code != 200:
+            if r.status_code == 200 or r.status_code == 401:
+                respuesta_sitio=True
+        if respuesta_sitio != True:
             mon.consecutive_failures+=1
             mon.consecutive_success=0
             mon.state=msg_down
@@ -107,6 +111,7 @@ while True:
             mon.consecutive_failures=0
             mon.consecutive_success+=1
             mon.state=msg_up
+            respuesta_sitio=False
     #Ejecuta monitor: Envio de correos
     for mon in Monitor:
         if mon.consecutive_failures > cuantos_eventos_disparan or mon.consecutive_success > cuantos_eventos_disparan:

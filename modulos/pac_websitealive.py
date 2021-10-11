@@ -55,8 +55,22 @@ def imprimir_monitor(Monitor):
         else:
             text_state=colored(255, 0, 0, mon.msg_down)
 
-        array_Monitor.append([mon.url,mon.alias,text_state,mon.response_time,mon.consecutive_success,mon.consecutive_failures,mon.response_code])
-    print(tabulate(array_Monitor,headers=["URL","Alias","State","Time(ms)","Success","Fails","Response"],tablefmt="pretty"))
+        array_Monitor.append([
+                            mon.url,
+                            mon.alias,
+                            text_state,
+                            mon.response_time,
+#                            mon.consecutive_success,
+#                            mon.consecutive_failures,
+                            mon.response_code])
+    print(tabulate(array_Monitor,headers=[
+                                            "URL",
+                                            "Alias",
+                                            "State",
+                                            "Time(ms)",
+ #                                           "Success",
+ #                                           "Fails",
+                                            "Response"],tablefmt="pretty"))
 
 def colored(r, g, b, text):
     return "\033[38;2;{};{};{}m{} \033[38;2;255;255;255m".format(r, g, b, text)
